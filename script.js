@@ -8,11 +8,16 @@ const botones = document.querySelectorAll('.app__card-button');
 const inputEnfoqueMusica = document.querySelector('#alternar-musica');
 const musica = new Audio ('./sonidos/luna-rise-part-one.mp3');
 const botonIniciarPausar = document.querySelector('#start-pause');
+const textoIniciarPausar = document.querySelector('#start-pause span');
+const iconoIniciarPausar = document.querySelector('#start-pause img');
+const tiempoEnPantalla = document.querySelector('#timer');
+
+
 const sonidoTiempoFinal = new Audio('./sonidos/beep.mp3');
 const sonidoInicio = new Audio('./sonidos/play.wav');
 const sonidoPausa = new Audio('./sonidos/pause.mp3');
 
-let tiempoTranscurridoEnSegundos = 5;
+let tiempoTranscurridoEnSegundos = 1500;
 let idIntervalo = null;
 
 musica.loop = true;
@@ -27,22 +32,26 @@ inputEnfoqueMusica.addEventListener('change', () => {
 })
 
 botonCorto.addEventListener('click', () => {
+    tiempoTranscurridoEnSegundos = 300;
     cambiarContexto('descanso-corto');
     botonCorto.classList.add('active');
     
 });
 
 botonEnfoque.addEventListener('click', () => {
+    tiempoTranscurridoEnSegundos = 1500;
     cambiarContexto('enfoque');
     botonEnfoque.classList.add('active');
 });
 
 botonLargo.addEventListener('click', () => {
+    tiempoTranscurridoEnSegundos = 900;
     cambiarContexto('descanso-largo');
     botonLargo.classList.add('active');
 })
 
-function cambiarContexto(contexto) {
+function cambiarContexto(contexto){
+    mostrarTiempo();
 
     botones.forEach((contexto) => {
         contexto.classList.remove('active');
@@ -81,8 +90,10 @@ const cuentaRegresiva = () => {
         reiniciar()
         return
     }
+    textoIniciarPausar.textContent = "Pausar";
+    iconoIniciarPausar.setAttribute('src','./imagenes/pause.png');
     tiempoTranscurridoEnSegundos -= 1;
-    console.log("temporizador:" + tiempoTranscurridoEnSegundos);
+    mostrarTiempo();
 }
 
 botonIniciarPausar.addEventListener('click', iniciarPausar);
@@ -99,5 +110,15 @@ function iniciarPausar(){
 
 function reiniciar(){
     clearInterval(idIntervalo);
-    idIntervalo = null
+    textoIniciarPausar.textContent = "Comenzar";
+    iconoIniciarPausar.setAttribute('src','./imagenes/play_arrow.png');
+    idIntervalo = null;
 }
+
+function mostrarTiempo(){
+    const tiempo = new Date(tiempoTranscurridoEnSegundos* 1000);
+    const tiempoFormateado = tiempo.toLocaleTimeString('es-MX',{minute:'2-digit', second:'2-digit'});
+    tiempoEnPantalla.innerHTML = `${tiempoFormateado}`;
+}
+
+mostrarTiempo();
