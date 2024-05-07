@@ -7,8 +7,16 @@ const titulo = document.querySelector('.app__title');
 const botones = document.querySelectorAll('.app__card-button');
 const inputEnfoqueMusica = document.querySelector('#alternar-musica');
 const musica = new Audio ('./sonidos/luna-rise-part-one.mp3');
+const botonIniciarPausar = document.querySelector('#start-pause');
+const sonidoTiempoFinal = new Audio('./sonidos/beep.mp3');
+const sonidoInicio = new Audio('./sonidos/play.wav');
+const sonidoPausa = new Audio('./sonidos/pause.mp3');
+
+let tiempoTranscurridoEnSegundos = 5;
+let idIntervalo = null;
 
 musica.loop = true;
+
 
 inputEnfoqueMusica.addEventListener('change', () => {
     if(musica.paused){
@@ -60,9 +68,36 @@ function cambiarContexto(contexto) {
             titulo.innerHTML = `
                  Hora de volver a la superficie<br>
                     <strong class="app__title-strong">Haz una pausa larga.</strong>
-                `;
-            break;    
+                `;   
         default:
             break;
     }
+}
+
+const cuentaRegresiva = () => {
+    if( tiempoTranscurridoEnSegundos <= 0 ){
+        sonidoTiempoFinal.play();
+        alert('tiempo finalizado');
+        reiniciar()
+        return
+    }
+    tiempoTranscurridoEnSegundos -= 1;
+    console.log("temporizador:" + tiempoTranscurridoEnSegundos);
+}
+
+botonIniciarPausar.addEventListener('click', iniciarPausar);
+
+function iniciarPausar(){
+    if(idIntervalo){
+        sonidoPausa.play()
+        reiniciar();
+        return;
+    }
+    sonidoInicio.play();
+    idIntervalo = setInterval( cuentaRegresiva, 1000 );
+}
+
+function reiniciar(){
+    clearInterval(idIntervalo);
+    idIntervalo = null
 }
